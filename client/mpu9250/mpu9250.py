@@ -127,7 +127,7 @@ class MPU9250(object):
         return
 
     # 磁気センサのレジスタを設定する
-    def _set_mag_register(self, _mode, _bit):
+    def _set_mag_register(self, _mode, _bit, _calibration=False):
         if self._MAG_ACCESS is False:
             # 磁気センサへのアクセスが有効になっていない場合は例外
             raise Exception('001 Access to a sensor is invalid.')
@@ -162,6 +162,12 @@ class MPU9250(object):
             self._MAG_BIT = 16
         print("set self._MAG_MODE=%s, %d bit" % (_mode, self._MAG_BIT))
         self.i2c.writeReg8(self.AK8963, 0x0A, _writeData)
+        time.sleep(0.1)
+
+        # Calibration
+        if _calibration is True:
+            self._calib_mag(3000)
+        return
 
     # センサからのデータはそのまま使おうとするとunsignedとして扱われるため、signedに変換(16ビット限定）
     def _u2s(self, unsigneddata):
