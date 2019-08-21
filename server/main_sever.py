@@ -3,7 +3,7 @@ import time
 
 import numpy as np
 
-from attitude_estimation.quat2eular import quat2eular_deg
+from attitude_estimation.quat_eular_converter import quat2eular_deg
 from attitude_estimation import server_thread, madgwick_filter
 
 
