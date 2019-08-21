@@ -13,7 +13,7 @@ def residuals(param, x, y):
     return y - model(param, x)
 
 
-if __name__ == '__main__':
+def param_prediction():
     df = pd.read_csv('mpu9250_mag_log.csv', header=None)
     # 観測したx, y, z
     Bx = df[0]
@@ -29,3 +29,6 @@ if __name__ == '__main__':
     res = ','.join(map(str, predicted))
     print(predicted)
     print(res)
+
+if __name__ == '__main__':
+    param_prediction()
