@@ -3,7 +3,7 @@ import time
 
 import wiringpi as wi
 import numpy as np
-from scipy.optimize import least_squares
+# from scipy.optimize import least_squares
 
 
 class MPU9250(object):
@@ -46,6 +46,9 @@ class MPU9250(object):
         self._offset_accel_x = 0
         self._offset_accel_y = 0
         self._offset_accel_z = 0
+        self._offset_mag_x = 0
+        self._offset_mag_y = 0
+        self._offset_mag_z = 0
 
         self._reset_register()
         self._power_wakeup()
@@ -338,37 +341,37 @@ class MPU9250(object):
         print("Gyro calibration complete")
         print(f'Gyro error X: {self._offset_gyro_x:.2f}  Y: {self._offset_gyro_y:.2f}  Z: {self._offset_gyro_z:.2f}')
 
-    # 地磁気センサを較正する
-    def _calib_mag(self, _count=3000):
-
-        def model(param, x):
-            return np.array([((xt[0] - param[0]) / param[3]) ** 2 + ((xt[1] - param[1]) / param[4]) ** 2 + (
-                    (xt[2] - param[2]) / param[5]) ** 2 for xt in x])
-
-        # 誤差関数
-        def residuals(param, x, y):
-            return y - model(param, x)
-
-        print("Mag calibration start")
-        print("Please keep the sensor turning around")
-        log = np.array([])
-
-        # データのサンプルを取る
-        for _ in range(_count):
-            _data = self.get_gyro()
-            np.append(log, [_data])
-
-        x_s = log.T
-        y_s = np.array([1.0] * len(x_s))
-        predicted_offset = np.array([5.0, 55, -65, 40, 40, 40])  # パラメータ初期値
-        res = least_squares(residuals, predicted_offset, args=(x_s, y_s))
-        offset_values = res.x
-
-        # 平均値をオフセットにする
-        self._offset_mag_x = -1.0 * offset_values[0]
-        self._offset_mag_y = -1.0 * offset_values[1]
-        self._offset_mag_z = -1.0 * offset_values[2]
-
-        # I want to register an offset value in a register. But I do not know the behavior, so I will put it on hold.
-        print("Mag calibration complete")
-        print(f'Mag error X: {self._offset_mag_x:.2f}  Y: {self._offset_mag_y:.2f}  Z: {self._offset_mag_z:.2f}')
+#    # 地磁気センサを較正する
+#    # def _calib_mag(self, _count=3000):
+#
+#        def model(param, x):
+#            return np.array([((xt[0] - param[0]) / param[3]) ** 2 + ((xt[1] - param[1]) / param[4]) ** 2 + (
+#                    (xt[2] - param[2]) / param[5]) ** 2 for xt in x])
+#
+#        # 誤差関数
+#        def residuals(param, x, y):
+#            return y - model(param, x)
+#
+#        print("Mag calibration start")
+#        print("Please keep the sensor turning around")
+#        log = np.array([])
+#
+#        # データのサンプルを取る
+#        for _ in range(_count):
+#            _data = self.get_gyro()
+#            np.append(log, [_data])
+#
+#        x_s = log.T
+#        y_s = np.array([1.0] * len(x_s))
+#        predicted_offset = np.array([5.0, 55, -65, 40, 40, 40])  # パラメータ初期値
+#        res = least_squares(residuals, predicted_offset, args=(x_s, y_s))
+#        offset_values = res.x
+#
+#        # 平均値をオフセットにする
+#        self._offset_mag_x = -1.0 * offset_values[0]
+#        self._offset_mag_y = -1.0 * offset_values[1]
+#        self._offset_mag_z = -1.0 * offset_values[2]
+#
+#        # I want to register an offset value in a register. But I do not know the behavior, so I will put it on hold.
+#        print("Mag calibration complete")
+#        print(f'Mag error X: {self._offset_mag_x:.2f}  Y: {self._offset_mag_y:.2f}  Z: {self._offset_mag_z:.2f}')

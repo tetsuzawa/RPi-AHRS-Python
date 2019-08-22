@@ -7,7 +7,7 @@ from concurrent.futures import ThreadPoolExecutor
 from mpu9250.mpu9250 import MPU9250
 
 
-def main(times):
+def main_client(times, ip_addr):
     ahrs = MPU9250()
 
     # while True:
@@ -45,9 +45,9 @@ def main(times):
         # ------- low, high pass version -------
 
         # --------------- print sensor data -----------------
-        print(f'gyro: {gyr_res[0]:.4f} {gyr_res[1]:.4f} {gyr_res[2]:.4f}  \
-        acc: {acc_res[0]:.4f} {acc_res[1]:.4f} {acc_res[2]:.4f}  \
-        mag: {mag_res[0]:.1f} {mag_res[1]:.1f} {mag_res[2]:.1f}')
+        print(f'gyro: {gyr_res[0]: >2.4f} {gyr_res[1]: >2.4f} {gyr_res[2]: >2.4f}  \
+        acc: {acc_res[0]: >2.4f} {acc_res[1]: >2.4f} {acc_res[2]: >2.4f}  \
+        mag: {mag_res[0]: >4.1f} {mag_res[1]: >4.1f} {mag_res[2]: >4.1f}')
         # --------------- print sensor data -----------------
 
         ss = ''
@@ -61,12 +61,12 @@ def main(times):
         """ UDP """
         with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
             letter = ss.encode('utf-8')
-            s.sendto(letter, ('192.168.0.5', 50009))
+            s.sendto(letter, (ip_addr, 50009))
 
         # --------------- serial communication -----------------
 
 
 if __name__ == '__main__':
-    # sample times
-    times = 3000
-    main(times=3000)
+    times = 5000  # sample times
+    ip_addr = '169.254.76.99'  # FILL YOUR IP ADDRESS
+    main_client(times=times, ip_addr=ip_addr)
