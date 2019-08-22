@@ -61,7 +61,7 @@ def main(times):
         """ UDP """
         with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
             letter = ss.encode('utf-8')
-            s.sendto(letter, ('192.168.0.5', 50009))
+            s.sendto(letter, ('192.168.2.1', 50009))
 
         # --------------- serial communication -----------------
 
