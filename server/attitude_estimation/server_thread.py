@@ -14,7 +14,7 @@ class ServerThreadUDP(threading.Thread):
 
         self.kill_flag = False
         # line information
-        self.host = '192.168.2.1'
+        self.host = '169.254.76.99'
         # self.host = socket.gethostname()
         self.port = port
         self.buffsize = 1024
