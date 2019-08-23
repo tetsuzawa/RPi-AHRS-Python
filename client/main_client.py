@@ -7,7 +7,7 @@ from concurrent.futures import ThreadPoolExecutor
 from mpu9250.mpu9250 import MPU9250
 
 
-def main_client(times, ip_addr):
+def main_client(times, server_ip, port):
     ahrs = MPU9250()
 
     # while True:
@@ -61,12 +61,13 @@ def main_client(times, ip_addr):
         """ UDP """
         with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
             letter = ss.encode('utf-8')
-            s.sendto(letter, (ip_addr, 50009))
+            s.sendto(letter, (server_ip, port))
 
         # --------------- serial communication -----------------
 
 
 if __name__ == '__main__':
     times = 5000  # sample times
-    ip_addr = '169.254.76.99'  # FILL YOUR IP ADDRESS
-    main_client(times=times, ip_addr=ip_addr)
+    server_ip = '192.168.0.5'  # FILL YOUR IP ADDRESS
+    port = 50009
+    main_client(times=times, server_ip=server_ip, port=port)

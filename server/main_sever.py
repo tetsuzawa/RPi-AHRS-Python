@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 import time
+import socket
+import struct
 
 import numpy as np
 import quaternion
@@ -9,7 +11,7 @@ from attitude_estimation.quat_eular_converter import quat2eular_deg
 from attitude_estimation import server_thread, madgwick_filter
 
 
-def main_server():
+def main_server(server_ip, server_port, unity_port):
     # ---------- quaternion madgwick ------------
     # Initialize
     # quat_mad = madgwick_filter.MadgwickFilter()
@@ -31,7 +33,6 @@ def main_server():
     quat = quaternion.quaternion(1, 0, 0, 0)
     roll, pitch, yaw = quat2eular_deg(quat)
     print(f'roll: {roll: >4.2f}  pitch: {pitch: >4.2f}  yaw: {yaw: >4.2f}')
-
     # ---------- quaternion madgwick clang ------------
 
     # initial dt
@@ -42,9 +43,6 @@ def main_server():
                         [30, 0, 0]])
 
     # ---------- madgwick c filter ------------
-    # wx, wy, wz = [0.01, 0.01, 1.0]
-    # ax, ay, az = [1e-4, 1e-4, 1e-4]
-    # mx, my, mz = [30, 0, 0]
     gyr, acc, mag = ini_val
     wx, wy, wz = map(str, gyr)
     ax, ay, az = map(str, acc)
@@ -60,7 +58,7 @@ def main_server():
     # ---------- madgwick c filter ------------
 
     # create server thread
-    sock = server_thread.ServerThreadUDP(port=50009, ini_val=ini_val)
+    sock = server_thread.ServerThreadUDP(server_ip=server_ip, port=server_port, ini_val=ini_val)
     sock.setDaemon(True)
     sock.start()
 
@@ -96,10 +94,6 @@ def main_server():
             # ---------- complementary filter ------------
 
             # ---------- madgwick c filter ------------
-            # wx, wy, wz = map(str, gyr)
-            # ax, ay, az = map(str, acc)
-            # mx, my, mz = map(str, mag)
-
             cmd[1:4] = map(str, gyr)
             cmd[4:7] = map(str, acc)
             cmd[7:10] = map(str, mag)
@@ -115,6 +109,20 @@ def main_server():
             roll, pitch, yaw = quat2eular_deg(quat)
 
             print(f'roll: {roll: >4.2f}  pitch: {pitch: >4.2f}  yaw: {yaw: >4.2f}')
+            # ---------- madgwick c filter ------------
+
+            # --------------- serial communication -----------------
+            """ UDP """
+            res_flist = map(np.float32, res_list)  # for quaternion
+            # res_flist = map(np.float32, (roll, pitch, yaw))  # for eular angle
+            res_blist = [struct.pack('f', resf) for resf in res_flist]
+            bres = b''
+            for bres in res_blist:
+                bres += bres
+            with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
+                # letter = ss.encode('utf-8')
+                s.sendto(bres, ('127.0.0.1', unity_port))
+            # --------------- serial communication -----------------
 
             time.sleep(0.0005)
     except KeyboardInterrupt:
@@ -122,4 +130,7 @@ def main_server():
 
 
 if __name__ == '__main__':
-    main_server()
+    server_ip = '192.168.0.5'
+    server_port = 50009
+    unity_port = 60002
+    main_server(server_ip=server_ip, server_port=server_port, unity_port=unity_port)
