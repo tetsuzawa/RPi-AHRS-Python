@@ -7,14 +7,14 @@ import numpy as np
 
 
 class ServerThreadUDP(threading.Thread):
-    def __init__(self, port=50009, ini_val=np.ones((3, 3))):
+    def __init__(self, server_ip='127.0.0.1', port=50009, ini_val=np.ones((3, 3))):
         threading.Thread.__init__(self)
         # initial value
         self.data = ini_val
 
         self.kill_flag = False
         # line information
-        self.host = '169.254.76.99'
+        self.host = server_ip
         # self.host = socket.gethostname()
         self.port = port
         self.buffsize = 1024
@@ -37,7 +37,7 @@ class ServerThreadUDP(threading.Thread):
 
 
 if __name__ == '__main__':
-    sock = ServerThreadUDP(port=50009, ini_val=np.zeros((3, 3)))
+    sock = ServerThreadUDP(server_ip='127.0.0.1', port=50009, ini_val=np.zeros((3, 3)))
     sock.setDaemon(True)
     sock.start()
     # sock.run()
