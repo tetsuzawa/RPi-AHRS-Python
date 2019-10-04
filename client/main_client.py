@@ -2,12 +2,13 @@
 import time  # timeライブラリの呼び出し
 import numpy as np
 import socket
+import sys
 from concurrent.futures import ThreadPoolExecutor
 
 from mpu9250.mpu9250 import MPU9250
 
 
-def main(times):
+def main_client(times, server_ip, port):
     ahrs = MPU9250()
 
     # while True:
@@ -45,9 +46,9 @@ def main(times):
         # ------- low, high pass version -------
 
         # --------------- print sensor data -----------------
-        print(f'gyro: {gyr_res[0]:.4f} {gyr_res[1]:.4f} {gyr_res[2]:.4f}  \
-        acc: {acc_res[0]:.4f} {acc_res[1]:.4f} {acc_res[2]:.4f}  \
-        mag: {mag_res[0]:.1f} {mag_res[1]:.1f} {mag_res[2]:.1f}')
+        print(f'gyro: {gyr_res[0]: >2.4f} {gyr_res[1]: >2.4f} {gyr_res[2]: >2.4f}  \
+        acc: {acc_res[0]: >2.4f} {acc_res[1]: >2.4f} {acc_res[2]: >2.4f}  \
+        mag: {mag_res[0]: >4.1f} {mag_res[1]: >4.1f} {mag_res[2]: >4.1f}')
         # --------------- print sensor data -----------------
 
         ss = ''
@@ -61,12 +62,19 @@ def main(times):
         """ UDP """
         with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
             letter = ss.encode('utf-8')
-            s.sendto(letter, ('192.168.0.5', 50009))
+            s.sendto(letter, (server_ip, port))
 
         # --------------- serial communication -----------------
 
 
 if __name__ == '__main__':
-    # sample times
-    times = 3000
-    main(times=3000)
+    args = sys.argv
+    times = 5000  # sample times
+    # server_ip = '192.168.0.5'  # FILL YOUR IP ADDRESS
+
+    try:
+        server_ip = args[1]
+    except ValueError:
+        print("Error: lack of argument. please write a server IP properly ")
+    port = 50020
+    main_client(times=times, server_ip=server_ip, port=port)
