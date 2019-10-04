@@ -2,6 +2,7 @@
 import time  # timeライブラリの呼び出し
 import numpy as np
 import socket
+import sys
 from concurrent.futures import ThreadPoolExecutor
 
 from mpu9250.mpu9250 import MPU9250
@@ -67,7 +68,13 @@ def main_client(times, server_ip, port):
 
 
 if __name__ == '__main__':
+    args = sys.argv
     times = 5000  # sample times
-    server_ip = '192.168.0.5'  # FILL YOUR IP ADDRESS
-    port = 50009
+    # server_ip = '192.168.0.5'  # FILL YOUR IP ADDRESS
+
+    try:
+        server_ip = args[1]
+    except ValueError:
+        print("Error: lack of argument. please write a server IP properly ")
+    port = 50020
     main_client(times=times, server_ip=server_ip, port=port)
