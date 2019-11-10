@@ -1,4 +1,6 @@
+#!/bin/bash
 # -*- coding: utf-8 -*-
+
 import time  # timeライブラリの呼び出し
 import numpy as np
 import socket

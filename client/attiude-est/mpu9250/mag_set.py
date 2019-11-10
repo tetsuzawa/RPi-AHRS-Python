@@ -5,7 +5,7 @@ import pandas as pd
 
 def model(param, X):
     return np.array([((Xt[0] - param[0]) / param[3]) ** 2 + ((Xt[1] - param[1]) / param[4]) ** 2 + (
-                (Xt[2] - param[2]) / param[5]) ** 2 for Xt in X])
+            (Xt[2] - param[2]) / param[5]) ** 2 for Xt in X])
 
 
 # 誤差関数
@@ -29,6 +29,7 @@ def param_prediction():
     res = ','.join(map(str, predicted))
     print(predicted)
     print(res)
+
 
 if __name__ == '__main__':
     param_prediction()
