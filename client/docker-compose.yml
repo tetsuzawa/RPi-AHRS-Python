@@ -1,0 +1,10 @@
+version: '3'
+services:
+  node:
+    build: attiude-est
+    container_name: "node-ahrs"
+    devices:
+      - "/dev/i2c-0:/dev/i2c-0"
+    tty: true
+    ports:
+      - "50020:50020"
