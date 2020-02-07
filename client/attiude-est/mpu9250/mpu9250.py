@@ -1,8 +1,12 @@
-# -*- coding: utf-8 -*-
+#!/usr/bin/env python3
+# coding: utf-8
+
 import time
 
 import wiringpi as wi
 import numpy as np
+
+
 # from scipy.optimize import least_squares
 
 
@@ -46,9 +50,9 @@ class MPU9250(object):
         self._offset_accel_x = 0
         self._offset_accel_y = 0
         self._offset_accel_z = 0
-        self._offset_mag_x = 0
-        self._offset_mag_y = 0
-        self._offset_mag_z = 0
+        self._offset_mag_x = -7.497336140
+        self._offset_mag_y = -57.461323250
+        self._offset_mag_z = 63.096101850
 
         self._reset_register()
         self._power_wakeup()
