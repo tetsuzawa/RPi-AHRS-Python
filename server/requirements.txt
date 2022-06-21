@@ -1,2 +1,2 @@
-numpy==1.17.0
+numpy==1.22.0
 numpy-quaternion==2019.7.23.15.26.49
